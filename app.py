@@ -52,6 +52,7 @@ meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago',
 
 #%% Autenticación
 app = Dash(external_stylesheets=[dbc.themes.SOLAR])
+server = app.server
 
 VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
 auth = dash_auth.BasicAuth(
@@ -525,4 +526,4 @@ def display_click_data(year_selec, clickData, active_cell, RangeS):
 
 
 if __name__ == '__main__':
-    app.run_server(host= '0.0.0.0', debug=False)
+    app.run_server(debug=False)
