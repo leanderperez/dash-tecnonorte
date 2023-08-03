@@ -18,9 +18,9 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 # import os
-import locale
-# import passwords
-locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
+# import locale
+import passwords
+# locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
 
 
@@ -55,11 +55,11 @@ meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago',
 app = Dash(external_stylesheets=[dbc.themes.SOLAR])
 server = app.server
 
-# VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
-# auth = dash_auth.BasicAuth(
-#     app,
-#     VALID_USERNAME_PASSWORD_PAIRS
-# )
+VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 #%% Funciones
 def Mapbox(df, Color):
