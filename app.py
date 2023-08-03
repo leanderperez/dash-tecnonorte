@@ -25,8 +25,8 @@ import passwords
 
 #%% Procesamiento de datos
 
-RM22 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22')
-RM23 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23')
+# RM22 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22')
+# RM23 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23')
 
 bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE'], format='%d-%m-%Y')
@@ -480,30 +480,30 @@ def update_table(year_selec, cliente_seleccionado, sucursales_selec, RangeS, act
     return b.to_dict('records')
 
 
-@app.callback(
-    Output('download', 'data'),
-    Input('year', 'value'),
-    Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'),
-    Input('table', 'active_cell'),
-    prevent_initial_call=True)
-def update_descarga(year_selec, cliente_seleccionado, sucursales_selec, RangeS, active_cell):
-    b = Year(year_selec)
-    b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
-    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
-    if cliente_seleccionado == None:
-        b
-    else:
-        b = b[b['CLIENTE'] == cliente_seleccionado]
-    if sucursales_selec != None:
-        b = b[b['SUCURSAL'].isin(sucursales_selec)]
-    if active_cell != None:
-        ods = b.iloc[active_cell['row'], active_cell['column']]
-        if ods+'.pdf' in RM22:
-            return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22/{ods}.pdf')
-        elif ods+'.pdf' in RM23:
-            return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23/{ods}.pdf')
+# @app.callback(
+#     Output('download', 'data'),
+#     Input('year', 'value'),
+#     Input('clientes', 'value'),
+#     Input('sucursales', 'value'),
+#     Input('range_slider', 'value'),
+#     Input('table', 'active_cell'),
+#     prevent_initial_call=True)
+# def update_descarga(year_selec, cliente_seleccionado, sucursales_selec, RangeS, active_cell):
+#     b = Year(year_selec)
+#     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
+#     b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
+#     if cliente_seleccionado == None:
+#         b
+#     else:
+#         b = b[b['CLIENTE'] == cliente_seleccionado]
+#     if sucursales_selec != None:
+#         b = b[b['SUCURSAL'].isin(sucursales_selec)]
+#     if active_cell != None:
+#         ods = b.iloc[active_cell['row'], active_cell['column']]
+#         if ods+'.pdf' in RM22:
+#             return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22/{ods}.pdf')
+#         elif ods+'.pdf' in RM23:
+#             return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23/{ods}.pdf')
 
 
 @app.callback(
