@@ -10,7 +10,7 @@ Atribución-NoComercial-SinDerivadas 4.0 Internacional.
 https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 """
 
-import dash
+
 from dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd
@@ -19,7 +19,7 @@ import dash_bootstrap_components as dbc
 import dash_auth
 # import os
 import locale
-import passwords
+# import passwords
 locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
 
@@ -52,14 +52,14 @@ meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago',
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
 
 #%% Autenticación
-app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
+app = Dash(external_stylesheets=[dbc.themes.SOLAR])
 server = app.server
 
-VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
+# VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
+# auth = dash_auth.BasicAuth(
+#     app,
+#     VALID_USERNAME_PASSWORD_PAIRS
+# )
 
 #%% Funciones
 def Mapbox(df, Color):
