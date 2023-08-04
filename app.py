@@ -17,9 +17,9 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 # import os
-# import locale
+import locale
 import passwords
-# locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
+locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
 
 
@@ -526,4 +526,4 @@ def display_click_data(year_selec, clickData, active_cell, RangeS):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
