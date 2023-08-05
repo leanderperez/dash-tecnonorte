@@ -529,4 +529,4 @@ def display_click_data(year_selec, clickData, active_cell, RangeS):
 
 
 if __name__ == '__main__':
-    app.run_server(port=port, debug=False)
+    app.run_server(port=port, debug=True)
