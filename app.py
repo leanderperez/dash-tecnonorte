@@ -51,7 +51,9 @@ meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago',
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
 
 #%% Autenticación
-app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.SOLAR])
 server = app.server
 
 VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
