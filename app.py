@@ -43,8 +43,8 @@ refrigerante = refrigerante.reset_index()
 locaciones = pd.read_excel('Locations.xlsx')
 locaciones = locaciones.merge(reportes, how='outer')
 locaciones = locaciones.merge(refrigerante, how='outer')
-locaciones =locaciones.dropna(0)
-# locaciones = locaciones.fillna(0)
+# locaciones =locaciones.dropna(0)
+locaciones = locaciones.fillna(0)
 
 meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dic'}
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
