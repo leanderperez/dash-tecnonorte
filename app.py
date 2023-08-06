@@ -20,8 +20,8 @@ import dash_auth
 import os
 import locale
 import passwords
-# locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
+locale.setlocale(LC_ALL,'es_ES.UTF-8')
 port = int(os.environ.get("PORT", 5000))
 
 #%% Procesamiento de datos
