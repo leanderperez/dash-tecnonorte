@@ -21,7 +21,7 @@ import os
 import locale
 import passwords
 
-locale.setlocale(LC_ALL,'es_ES.UTF-8')
+# locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 port = int(os.environ.get("PORT", 5000))
 
 #%% Procesamiento de datos
@@ -86,10 +86,10 @@ def Reportes(df, col):
     return fig
 
 def Reportes4Mes(b):
-    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
+    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name()
     df = b.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
-    new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-    df = df.reindex(new_order, axis=0)
+    # new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    # df = df.reindex(new_order, axis=0)
     df = df.fillna(0)
     
     fig = px.line(df, x=df.index, y="REPORTES", 
