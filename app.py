@@ -18,7 +18,7 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 import os
-# import locale
+import locale
 import passwords
 # locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
