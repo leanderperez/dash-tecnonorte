@@ -18,10 +18,10 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 import os
-import locale
+# import locale
 import passwords
-
 # locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
+
 port = int(os.environ.get("PORT", 5000))
 
 #%% Procesamiento de datos
@@ -86,10 +86,10 @@ def Reportes(df, col):
     return fig
 
 def Reportes4Mes(b):
-    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name()
+    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
     df = b.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
-    # new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-    # df = df.reindex(new_order, axis=0)
+    new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    df = df.reindex(new_order, axis=0)
     df = df.fillna(0)
     
     fig = px.line(df, x=df.index, y="REPORTES", 
@@ -529,4 +529,4 @@ def display_click_data(year_selec, clickData, active_cell, RangeS):
 
 
 if __name__ == '__main__':
-    app.run_server(port=port, debug=True)
+    app.run_server(port=port, debug=False)
