@@ -29,7 +29,7 @@ port = int(os.environ.get("PORT", 5000))
 # RM22 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22')
 # RM23 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23')
 
-bitacoras = pd.read_excel('Consol.xlsx')
+bitacoras = pd.read_csv('Consol.csv')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE'], format='%d-%m-%Y')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
@@ -43,8 +43,8 @@ refrigerante = refrigerante.reset_index()
 locaciones = pd.read_excel('Locations.xlsx')
 locaciones = locaciones.merge(reportes, how='outer')
 locaciones = locaciones.merge(refrigerante, how='outer')
-# locaciones =locaciones.dropna(0)
-locaciones = locaciones.fillna(0)
+locaciones =locaciones.dropna(0)
+# locaciones = locaciones.fillna(0)
 
 meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dic'}
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
