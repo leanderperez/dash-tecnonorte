@@ -29,7 +29,7 @@ port = int(os.environ.get("PORT", 5000))
 # RM22 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22')
 # RM23 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23')
 
-bitacoras = pd.read_csv('Consol.csv')
+bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE'], format='%d-%m-%Y')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
