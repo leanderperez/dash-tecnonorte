@@ -10,8 +10,7 @@ Atribución-NoComercial-SinDerivadas 4.0 Internacional.
 https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 """
 
-import dash
-from dash import Dash, html, dcc, Input, Output, dash_table
+from  dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
@@ -43,7 +42,7 @@ refrigerante = refrigerante.reset_index()
 locaciones = pd.read_excel('Locations.xlsx')
 locaciones = locaciones.merge(reportes, how='outer')
 locaciones = locaciones.merge(refrigerante, how='outer')
-locaciones =locaciones.dropna(0)
+locaciones =locaciones.dropna()
 # locaciones = locaciones.fillna(0)
 
 meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dic'}
@@ -54,14 +53,9 @@ app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.SOLAR])
 
-
-server = app.server
-
 VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
+auth = dash_auth.BasicAuth(app,
+    VALID_USERNAME_PASSWORD_PAIRS)
 
 #%% Funciones
 def Mapbox(df, Color):
