@@ -52,17 +52,11 @@ meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago',
 
 #%% Lanzamiento de la Aplicación y Autenticación
 app = Dash(
-    __name__,
-    external_stylesheets=[dbc.themes.SOLAR])
-
-
-server = app.server
+    __name__, external_stylesheets=[dbc.themes.SOLAR])
 
 VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
 auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
+    app, VALID_USERNAME_PASSWORD_PAIRS)
 
 #%% Funciones
 def Mapbox(df, Color):
