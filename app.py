@@ -10,7 +10,7 @@ Atribución-NoComercial-SinDerivadas 4.0 Internacional.
 https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 """
 
-import dash
+
 from dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd
@@ -18,8 +18,9 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 import os
-# import locale
 import passwords
+
+# import locale
 # locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
 port = int(os.environ.get("PORT", 5000))
