@@ -123,7 +123,7 @@ app.layout = html.Div([
                 end_date_placeholder_text="Fin",
                 calendar_orientation='horizontal',
                 start_date=date(2022, 1, 1),
-                style={'width': '100%', 'float': 'left', 'display': 'inline-block'}
+                style={'width': '30%', 'float': 'left', 'display': 'inline-block'}
                 )]),
         
         html.Div([
@@ -399,15 +399,15 @@ def update_Visitas(cliente_seleccionado, clickData):
     Input('clientes', 'value'),
     Input('sucursales', 'value'))
 def update_table(cliente_seleccionado, sucursales_selec):
-    global bitacoras
+    df = bitacoras
     #bitacoras['FECHA DE REPORTE'] = bitacoras['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
     if cliente_seleccionado == None:
-        bitacoras
+        df
     else:
-        bitacoras = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
+        df = df[df['CLIENTE'] == cliente_seleccionado]
     if sucursales_selec != None:
-        bitacoras = bitacoras[bitacoras['SUCURSAL'].isin(sucursales_selec)]
-    return bitacoras.to_dict('records')
+        df = df[df['SUCURSAL'].isin(sucursales_selec)]
+    return df.to_dict('records')
 
 
 @app.callback(
