@@ -450,7 +450,6 @@ def update_table(year_selec, cliente_seleccionado, sucursales_selec, RangeS, act
     Input('table', 'active_cell'),
     Input('range_slider', 'value'))
 def display_click_data(year_selec, clickData, active_cell, RangeS):
-    b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
     b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
     if clickData == None and active_cell == None:
