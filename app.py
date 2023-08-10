@@ -47,7 +47,6 @@ locaciones = locaciones.merge(refrigerante, how='outer')
 # locaciones =locaciones.dropna()
 locaciones = locaciones.fillna(0)
 
-meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dic'}
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
 
 #%% Lanzamiento de la Aplicación y Autenticación
@@ -81,10 +80,8 @@ def Reportes(df, col):
     return fig
 
 def Reportes4Mes(b):
-    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
+    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name()
     df = b.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
-    new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-    df = df.reindex(new_order, axis=0)
     df = df.fillna(0)
     
     fig = px.line(df, x=df.index, y="REPORTES", 
@@ -236,7 +233,6 @@ def sucursales_options(cliente_seleccionado):
 
 @app.callback(
     Output('Mapbox', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'))
@@ -256,7 +252,6 @@ def update_Mapbox(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 
 @app.callback(
     Output('ReportesFCliente', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'))
@@ -283,7 +278,6 @@ def update_reportes(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 
 @app.callback(
     Output('ReportesFMes', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'))
@@ -313,7 +307,6 @@ def update_reportes4mes(year_selec, cliente_seleccionado, sucursales_selec, Rang
 
 @app.callback(
     Output('FugasFCliente', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'))
@@ -347,7 +340,6 @@ def update_fugas(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 
 @app.callback(
     Output('FugasFMes', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'))
@@ -385,8 +377,6 @@ def update_fugas4mes(year_selec, cliente_seleccionado, sucursales_selec, RangeS)
             dff = df[df['SUCURSAL'] == sucursal]
             # dff['FECHA DE REPORTE'] = dff['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
             dff = dff.groupby(['FECHA DE REPORTE'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
-            new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-            dff = dff.reindex(new_order, axis=0)
             dff = dff.fillna(0)
             
             fig.add_trace(go.Scatter(x=dff.index, y=dff, 
@@ -396,7 +386,6 @@ def update_fugas4mes(year_selec, cliente_seleccionado, sucursales_selec, RangeS)
 
 @app.callback(
     Output('Visita', 'figure'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('Mapbox', 'clickData'),
     Input('range_slider', 'value'))
@@ -438,7 +427,6 @@ def update_Visitas(year_selec, cliente_seleccionado, clickData, RangeS):
     
 @app.callback(
     Output('table', 'data'),
-    Input('year', 'value'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
     Input('range_slider', 'value'),
@@ -456,35 +444,8 @@ def update_table(year_selec, cliente_seleccionado, sucursales_selec, RangeS, act
     return b.to_dict('records')
 
 
-# @app.callback(
-#     Output('download', 'data'),
-#     Input('year', 'value'),
-#     Input('clientes', 'value'),
-#     Input('sucursales', 'value'),
-#     Input('range_slider', 'value'),
-#     Input('table', 'active_cell'),
-#     prevent_initial_call=True)
-# def update_descarga(year_selec, cliente_seleccionado, sucursales_selec, RangeS, active_cell):
-#     b = Year(year_selec)
-#     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
-#     b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
-#     if cliente_seleccionado == None:
-#         b
-#     else:
-#         b = b[b['CLIENTE'] == cliente_seleccionado]
-#     if sucursales_selec != None:
-#         b = b[b['SUCURSAL'].isin(sucursales_selec)]
-#     if active_cell != None:
-#         ods = b.iloc[active_cell['row'], active_cell['column']]
-#         if ods+'.pdf' in RM22:
-#             return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22/{ods}.pdf')
-#         elif ods+'.pdf' in RM23:
-#             return dcc.send_file(f'//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23/{ods}.pdf')
-
-
 @app.callback(
     Output('click-data', 'children'),
-    Input('year', 'value'),
     Input('Mapbox', 'clickData'),
     Input('table', 'active_cell'),
     Input('range_slider', 'value'))
