@@ -10,7 +10,7 @@ Atribución-NoComercial-SinDerivadas 4.0 Internacional.
 https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 """
 
-
+from datetime import date
 from dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd
@@ -44,8 +44,8 @@ refrigerante = refrigerante.reset_index()
 locaciones = pd.read_excel('Locations.xlsx')
 locaciones = locaciones.merge(reportes, how='outer')
 locaciones = locaciones.merge(refrigerante, how='outer')
-locaciones =locaciones.dropna(0)
-# locaciones = locaciones.fillna(0)
+# locaciones =locaciones.dropna()
+locaciones = locaciones.fillna(0)
 
 meses = {1:'Ene', 2:'Feb', 3:'Mar', 4:'Abr', 5:'May', 6:'Jun', 7:'Jul', 8:'Ago', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dic'}
 # template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
@@ -93,14 +93,6 @@ def Reportes4Mes(b):
     fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
     return fig
 
-def Year(year_selec):
-    if year_selec == '2022':
-        b = bitacoras.loc[(bitacoras['FECHA DE REPORTE'] >= '2022') & (bitacoras['FECHA DE REPORTE'] < '2023')]
-    elif year_selec == '2023':
-        b = bitacoras.loc[(bitacoras['FECHA DE REPORTE'] >= '2023')]
-    else: 
-        b = bitacoras
-    return b
 
 def Locaciones(b):
     r = b.groupby('CLIENTE')['SUCURSAL'].value_counts().rename('Reportes')
@@ -139,13 +131,14 @@ app.layout = html.Div([
         id='contenedor_app', children=[
             
         html.Div([
-            html.Label('Años'),
-            dcc.RadioItems(
-                ['2022', '2023'],
-                'Linear',
-                id='year',
-                labelStyle={'display': 'inline-block'})],
-                style={'width': '20%', 'display': 'inline-block'}),
+            html.Label('Rango de Fecha'),
+            dcc.DatePickerRange(
+                id='date'
+                # start_date_placeholder_text="Inicio",
+                end_date_placeholder_text="Fin",
+                calendar_orientation='vertical',
+                start_date=date(2022, 1, 1),
+                style={'width': '30%', 'float': 'left'})]),
         
         html.Div([
             html.Label('Clientes'),
@@ -158,9 +151,7 @@ app.layout = html.Div([
             dcc.Dropdown(id='sucursales', multi=True)]),
         
         html.Div([
-            #html.Br(),
             html.Label('Grafico de sucursales'),
-            
             html.Div([
                 dcc.Graph(id="Mapbox")], 
                     style={'width': '50%', 'display': 'inline-block', 'padding': '0 20'}),
@@ -194,19 +185,6 @@ app.layout = html.Div([
                     ]
                 )],
                 style={'display': 'inline-block', 'width': '49%', 'float': 'right'})
-        ]),
-        
-        html.Div([
-        #html.Br(),
-        html.Label('Rango de meses'),
-        dcc.RangeSlider(
-            min=1,
-            max=12,
-            step=None,
-            marks=meses,
-            value=[1, 12],
-            allowCross=False,
-            id='range_slider'),
         ]),
         
         html.Br(),
@@ -524,4 +502,4 @@ def display_click_data(year_selec, clickData, active_cell, RangeS):
 
 
 if __name__ == '__main__':
-    app.run_server(port=port, debug=False)
+    app.run_server(port=port, debug=True)
