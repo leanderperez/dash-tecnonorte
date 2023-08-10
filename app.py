@@ -25,11 +25,19 @@ port = int(os.environ.get("PORT", 5000))
 # import locale
 # locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
-#%% Procesamiento de datos
-
 # RM22 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM22')
 # RM23 = os.listdir('//192.168.123.252/Compartida/24 OPERACIONES/REFERENCIAS RM/RM23')
+# template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
 
+#%% Lanzamiento de la Aplicación y Autenticación
+app = Dash(
+    __name__, external_stylesheets=[dbc.themes.SOLAR])
+
+VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
+auth = dash_auth.BasicAuth(
+    app, VALID_USERNAME_PASSWORD_PAIRS)
+
+#%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE'], format='%d-%m-%Y')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
@@ -46,16 +54,6 @@ locaciones = locaciones.merge(reportes, how='outer')
 locaciones = locaciones.merge(refrigerante, how='outer')
 # locaciones =locaciones.dropna()
 locaciones = locaciones.fillna(0)
-
-# template = ["plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none"]
-
-#%% Lanzamiento de la Aplicación y Autenticación
-app = Dash(
-    __name__, external_stylesheets=[dbc.themes.SOLAR])
-
-VALID_USERNAME_PASSWORD_PAIRS = passwords.keys 
-auth = dash_auth.BasicAuth(
-    app, VALID_USERNAME_PASSWORD_PAIRS)
 
 #%% Funciones
 def Mapbox(df, Color):
@@ -130,7 +128,7 @@ app.layout = html.Div([
         html.Div([
             html.Label('Rango de Fecha'),
             dcc.DatePickerRange(
-                id='date'
+                id='date',
                 # start_date_placeholder_text="Inicio",
                 end_date_placeholder_text="Fin",
                 calendar_orientation='vertical',
@@ -219,11 +217,9 @@ app.layout = html.Div([
 #%% Callbacks
 
 @app.callback(
-    Output('clientes', 'options'),
-    Input('year', 'value'))
-def clientes_options(year_selec):
-    b = Year(year_selec)
-    return [*set(b['CLIENTE'])]
+    Output('clientes', 'options'))
+def clientes_options():
+    return [*set(bitacoras['CLIENTE'])]
 
 @app.callback(
     Output('sucursales', 'options'),
@@ -234,8 +230,7 @@ def sucursales_options(cliente_seleccionado):
 @app.callback(
     Output('Mapbox', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'))
+    Input('sucursales', 'value'))
 def update_Mapbox(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -253,8 +248,7 @@ def update_Mapbox(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 @app.callback(
     Output('ReportesFCliente', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'))
+    Input('sucursales', 'value'))
 def update_reportes(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -279,8 +273,7 @@ def update_reportes(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 @app.callback(
     Output('ReportesFMes', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'))
+    Input('sucursales', 'value'))
 def update_reportes4mes(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -308,8 +301,7 @@ def update_reportes4mes(year_selec, cliente_seleccionado, sucursales_selec, Rang
 @app.callback(
     Output('FugasFCliente', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'))
+    Input('sucursales', 'value'))
 def update_fugas(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -341,8 +333,7 @@ def update_fugas(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
 @app.callback(
     Output('FugasFMes', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'),
-    Input('range_slider', 'value'))
+    Input('sucursales', 'value'))
 def update_fugas4mes(year_selec, cliente_seleccionado, sucursales_selec, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -387,8 +378,7 @@ def update_fugas4mes(year_selec, cliente_seleccionado, sucursales_selec, RangeS)
 @app.callback(
     Output('Visita', 'figure'),
     Input('clientes', 'value'),
-    Input('Mapbox', 'clickData'),
-    Input('range_slider', 'value'))
+    Input('Mapbox', 'clickData'))
 def update_Visitas(year_selec, cliente_seleccionado, clickData, RangeS):
     b = Year(year_selec)
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
@@ -429,7 +419,6 @@ def update_Visitas(year_selec, cliente_seleccionado, clickData, RangeS):
     Output('table', 'data'),
     Input('clientes', 'value'),
     Input('sucursales', 'value'),
-    Input('range_slider', 'value'),
     Input('table', 'active_cell'))
 def update_table(year_selec, cliente_seleccionado, sucursales_selec, RangeS, active_cell):
     b = Year(year_selec)
@@ -447,8 +436,7 @@ def update_table(year_selec, cliente_seleccionado, sucursales_selec, RangeS, act
 @app.callback(
     Output('click-data', 'children'),
     Input('Mapbox', 'clickData'),
-    Input('table', 'active_cell'),
-    Input('range_slider', 'value'))
+    Input('table', 'active_cell'))
 def display_click_data(year_selec, clickData, active_cell, RangeS):
     b = b.loc[(b['FECHA DE REPORTE'].dt.month >= RangeS[0]) & (b['FECHA DE REPORTE'].dt.month <= RangeS[-1])]
     b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
