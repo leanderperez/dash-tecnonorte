@@ -360,9 +360,8 @@ def update_fugas4mes(cliente_seleccionado, sucursales_selec):
     Input('clientes', 'value'),
     Input('Mapbox', 'clickData'))
 def update_Visitas(cliente_seleccionado, clickData):
-    b = Year(b = b.loc[(b['FECHA DE REPORTE'].dt.month >[0]) & (b['FECHA DE REPORTE'].dt.month <[-1])])
     if cliente_seleccionado == None:
-        df = b['TIPO DE FALLA'].value_counts().rename('Visitas')
+        df = bitacoras['TIPO DE FALLA'].value_counts().rename('Visitas')
         fig = px.pie(df, values='Visitas', names=df.index,
                      title= 'Motivos de la visita',
                      labels={'index': 'Motivo de visita'},
@@ -371,7 +370,7 @@ def update_Visitas(cliente_seleccionado, clickData):
         fig.update_traces(textposition='inside', textinfo='percent')
         fig.update_layout(height=400, margin={'l': 20, 'b': 20, 'r': 0, 't': 50})
     else:
-        df = b[b['CLIENTE'] == cliente_seleccionado]
+        df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
         dff = df['TIPO DE FALLA'].value_counts().rename('Visitas')
         fig = px.pie(dff, values='Visitas', names=dff.index,
                      title= f'Motivos de la visita a {cliente_seleccionado}',
@@ -382,8 +381,8 @@ def update_Visitas(cliente_seleccionado, clickData):
         fig.update_layout(height=400, margin={'l': 20, 'b': 20, 'r': 0, 't': 50})
     if clickData != None:
         sucursal = clickData['points'][0]['hovertext']
-        df = b[b['CLIENTE'] == cliente_seleccionado]
-        df = b[b['SUCURSAL'] == sucursal]
+        df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
+        df = bitacoras[bitacoras['SUCURSAL'] == sucursal]
         dff = df['TIPO DE FALLA'].value_counts().rename('Visitas')
         fig = px.pie(dff, values='Visitas', names=dff.index,
                      title= f'Motivos de la visita a {cliente_seleccionado} - {sucursal}',
@@ -413,12 +412,12 @@ def update_table(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('click-data', 'children'),
     Input('Mapbox', 'clickData'),
-    Input('table', 'active_cell'))
-def display_click_data(clickData, active_cell):
-    b = b.loc[(b['FECHA DE REPORTE'].dt.month >[0]) & (b['FECHA DE REPORTE'].dt.month <[-1])]
-    b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
-    if clickData == None and active_cell == None:
-        msj = (' NaN')
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def display_click_data(clickData, start_date, end_date):
+    
+    if clickData == None:
+        msj = [start_date, end_date]
     else:
         sucursal = clickData['points'][0]['hovertext']
         msj = (f' Sucursal: {sucursal}')
