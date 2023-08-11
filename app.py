@@ -33,7 +33,8 @@ auth = dash_auth.BasicAuth(
 
 #%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
-bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE'], format='%d-%m-%Y')
+bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.date
+#df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -68,7 +69,7 @@ def Fugas(df):
     return
 
 def Reportes4Mes(df):
-    df['FECHA DE REPORTE'] = df['FECHA DE REPORTE'].dt.month_name()
+    df['FECHA DE REPORTE'] = df['FECHA DE REPORTE'].month_name
     df = df.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
     df = df.fillna(0)
     
@@ -259,21 +260,18 @@ def update_reportes(cliente_seleccionado, sucursales_selec):
     Input('clientes', 'value'),
     Input('sucursales', 'value'))
 def update_reportes4mes(cliente_seleccionado, sucursales_selec):
-    b = Year(b = b.loc[(b['FECHA DE REPORTE'].dt.month >[0]) & (b['FECHA DE REPORTE'].dt.month <[-1])])
     if cliente_seleccionado == None:
-        fig = Reportes4Mes(b)
+        fig = Reportes4Mes(bitacoras)
     else:
-        df = b[b['CLIENTE'] == cliente_seleccionado]
+        df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
         fig = Reportes4Mes(df)
     if sucursales_selec != None:
         fig = go.Figure()
         for sucursal in sucursales_selec:
-            df = b[b['CLIENTE'] == cliente_seleccionado]
+            df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
             dff = df[df['SUCURSAL'] == sucursal]
-            dff['FECHA DE REPORTE'] = dff['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
+            dff['FECHA DE REPORTE'] = dff['FECHA DE REPORTE'].dt.month_name()
             dff = dff.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
-            new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-            dff = dff.reindex(new_order, axis=0)
             dff = dff.fillna(0)
             
             fig.add_trace(go.Scatter(x=dff.index, y=dff, 
