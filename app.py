@@ -34,7 +34,8 @@ auth = dash_auth.BasicAuth(
 #%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.date
-#df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
+# df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
+# bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name()
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -69,7 +70,7 @@ def Fugas(df):
     return
 
 def Reportes4Mes(df):
-    df['FECHA DE REPORTE'] = df['FECHA DE REPORTE'].month_name
+    df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.month_name()
     df = df.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
     df = df.fillna(0)
     
