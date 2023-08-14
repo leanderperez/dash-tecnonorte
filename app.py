@@ -33,9 +33,8 @@ auth = dash_auth.BasicAuth(
 
 #%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
-bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.date
 # df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
-# bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
+bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -61,7 +60,6 @@ def Reportes(df, col):
     fig.update_layout(height=245, margin={'l': 10, 'b': 0, 'r': 10, 't': 10})
     return fig
 
-
 def Reportes4Mes(df):
     df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.month_name()
     df = df.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
@@ -73,12 +71,23 @@ def Reportes4Mes(df):
     fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
     return fig
 
+def Fugas4Mes(df):
+    df = df.groupby(['FECHA DE REPORTE'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
+    new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    df = df.reindex(new_order, axis=0)
+    df = df.fillna(0)
 
-def Locaciones(bitacora):
-    reportes = bitacora.groupby('CLIENTE')['SUCURSAL'].value_counts().rename('Reportes')
+    fig = px.line(df, x=df.index, y="Refrigerante", 
+                  markers=True,
+                  template='seaborn')
+    fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
+    return fig
+
+def Locaciones(df):
+    reportes = df.groupby('CLIENTE')['SUCURSAL'].value_counts().rename('Reportes')
     reportes = reportes.reset_index()
     
-    refrigerante = bitacora.groupby(['CLIENTE', 'SUCURSAL'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
+    refrigerante = df.groupby(['CLIENTE', 'SUCURSAL'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
     refrigerante = refrigerante.reset_index()
     
     locaciones = pd.read_excel('Locations.xlsx')
@@ -86,7 +95,6 @@ def Locaciones(bitacora):
     locaciones = locaciones.merge(refrigerante, how='outer')
     locaciones = locaciones.fillna(0)
     return locaciones
-
 
 
 #%% Layout
@@ -307,38 +315,22 @@ def update_fugas(cliente_seleccionado, sucursales_selec):
     Input('clientes', 'value'),
     Input('sucursales', 'value'))
 def update_fugas4mes(cliente_seleccionado, sucursales_selec):
-    b = Year(b = b.loc[(b['FECHA DE REPORTE'].dt.month >[0]) & (b['FECHA DE REPORTE'].dt.month <[-1])])
     if cliente_seleccionado == None:
-        
-        b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
-        df = b.groupby(['FECHA DE REPORTE'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
-        new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        df = df.reindex(new_order, axis=0)
-        df = df.fillna(0)
-        fig = px.line(df, x=df.index, y="Refrigerante", 
-                      markers=True,
-                      template='seaborn')
-        fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
+        df = bitacoras
+        fig = Fugas4Mes(df)
         
     else:
-        b = b[b['CLIENTE'] == cliente_seleccionado]
-        b['FECHA DE REPORTE'] = b['FECHA DE REPORTE'].dt.month_name(locale = 'es_ES')
-        df = b.groupby(['FECHA DE REPORTE'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
-        new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        df = df.reindex(new_order, axis=0)
-        df = df.fillna(0)
-        fig = px.line(df, x=df.index, y="Refrigerante", 
-                      markers=True,
-                      template='seaborn')
-        fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
+        df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
+        fig = Fugas4Mes(df)
         
     if sucursales_selec != None:
         fig = go.Figure()
         for sucursal in sucursales_selec:
-            df = b[b['CLIENTE'] == cliente_seleccionado]
+            df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
             dff = df[df['SUCURSAL'] == sucursal]
-            # dff['FECHA DE REPORTE'] = dff['FECHA DE REPORTE'].dt.month_name(locale = 'Spanish')
             dff = dff.groupby(['FECHA DE REPORTE'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
+            new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+            dff = dff.reindex(new_order, axis=0)
             dff = dff.fillna(0)
             
             fig.add_trace(go.Scatter(x=dff.index, y=dff, 
