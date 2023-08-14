@@ -35,7 +35,7 @@ auth = dash_auth.BasicAuth(
 bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.date
 # df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
-bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
+# bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -55,19 +55,12 @@ def Mapbox(df, color):
     return fig
 
 def Reportes(df, col):
-    fig = px.bar(df, df["index"], df["Reportes"],
-                 hover_data=['index', 'Reportes'], color='Reportes',
-                 labels={'index': col},
+    fig = px.bar(df, df[col], df["Reportes"],
+                 hover_data=[col, 'Reportes'], color='Reportes',
                  template='ggplot2')
     fig.update_layout(height=245, margin={'l': 10, 'b': 0, 'r': 10, 't': 10})
     return fig
 
-def Fugas(df):
-    fig = px.bar(df, df["index"], df.Refrigerante,
-                hover_data=['index', 'Refrigerante'], color='Refrigerante',
-                template='ggplot2')
-    fig.update_layout(height=245, margin={'l': 10, 'b': 0, 'r': 10, 't': 10})
-    return
 
 def Reportes4Mes(df):
     df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.month_name()
@@ -209,7 +202,6 @@ app.layout = html.Div([
 
 
 # %% Callbacks
-
 @app.callback(
     Output('sucursales', 'options'),
     Input('clientes', 'value'))
@@ -242,18 +234,18 @@ def update_reportes(cliente_seleccionado, sucursales_selec):
         df = bitacoras.CLIENTE.value_counts().rename('Reportes')
         df = df.reset_index()
         df.dropna()
-        fig = Reportes(df, 'Cliente')
+        fig = Reportes(df, 'CLIENTE')
     else:
-        df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
-        df = df.SUCURSAL.value_counts().rename('Reportes')
-        df = df.reset_index()
-        df.dropna()
-        fig = Reportes(df, 'Sucursal')
+        df1 = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
+        df1 = df1.SUCURSAL.value_counts().rename('Reportes')
+        df1 = df1.reset_index()
+        df1.dropna()
+        fig = Reportes(df1, 'SUCURSAL')
     if sucursales_selec != None:
-        df = bitacoras[bitacoras['SUCURSAL'].isin(sucursales_selec)]
-        df = df.SUCURSAL.value_counts().rename('Reportes')
-        df = df.reset_index()
-        fig = Reportes(df, 'Sucursal')
+        df2 = bitacoras[bitacoras['SUCURSAL'].isin(sucursales_selec)]
+        df2 = df2.SUCURSAL.value_counts().rename('Reportes')
+        df2 = df2.reset_index()
+        fig = Reportes(df2, 'SUCURSAL')
     return fig
 
 @app.callback(
@@ -398,7 +390,6 @@ def update_Visitas(cliente_seleccionado, clickData):
     Input('sucursales', 'value'))
 def update_table(cliente_seleccionado, sucursales_selec):
     df = bitacoras
-    #bitacoras['FECHA DE REPORTE'] = bitacoras['FECHA DE REPORTE'].dt.strftime('%d/%m/%Y')
     if cliente_seleccionado == None:
         df
     else:
@@ -406,7 +397,6 @@ def update_table(cliente_seleccionado, sucursales_selec):
     if sucursales_selec != None:
         df = df[df['SUCURSAL'].isin(sucursales_selec)]
     return df.to_dict('records')
-
 
 @app.callback(
     Output('click-data', 'children'),
