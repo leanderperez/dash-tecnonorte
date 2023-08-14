@@ -61,11 +61,13 @@ def Reportes(df, col):
     return fig
 
 def Reportes4Mes(df):
-    df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.month_name()
-    df = df.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
+    
+    df = df.groupby(['FECHA DE REPORTE']).size().rename('Reportes')
+    new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    df = df.reindex(new_order, axis=0)
     df = df.fillna(0)
     
-    fig = px.line(df, x=df.index, y="REPORTES", 
+    fig = px.line(df, x=df.index, y="Reportes", 
                   markers=True,
                   template='seaborn')
     fig.update_layout(height=225, margin={'l': 10, 'b': 10, 'r': 60, 't': 10})
@@ -262,7 +264,8 @@ def update_reportes(cliente_seleccionado, sucursales_selec):
     Input('sucursales', 'value'))
 def update_reportes4mes(cliente_seleccionado, sucursales_selec):
     if cliente_seleccionado == None:
-        fig = Reportes4Mes(bitacoras)
+        df = bitacoras
+        fig = Reportes4Mes(df)
     else:
         df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
         fig = Reportes4Mes(df)
@@ -271,8 +274,9 @@ def update_reportes4mes(cliente_seleccionado, sucursales_selec):
         for sucursal in sucursales_selec:
             df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
             dff = df[df['SUCURSAL'] == sucursal]
-            dff['FECHA DE REPORTE'] = dff['FECHA DE REPORTE'].dt.month_name()
             dff = dff.groupby(['FECHA DE REPORTE']).size().rename('REPORTES')
+            new_order = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+            dff = dff.reindex(new_order, axis=0)
             dff = dff.fillna(0)
             
             fig.add_trace(go.Scatter(x=dff.index, y=dff, 
