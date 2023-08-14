@@ -17,10 +17,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
-import os
+# import os
 import passwords
 
-port = int(os.environ.get("PORT", 5000))
+#port = int(os.environ.get("PORT", 5000))
 
 
 #%% Lanzamiento de la Aplicación y Autenticación
@@ -35,7 +35,7 @@ auth = dash_auth.BasicAuth(
 bitacoras = pd.read_excel('Consol.xlsx')
 bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.date
 # df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
-# bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
+bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -425,4 +425,4 @@ def display_click_data(clickData, start_date, end_date):
 
 
 if __name__ == '__main__':
-    app.run_server(port=port, debug=True)
+    app.run_server(host="0.0.0.0", debug=True)
