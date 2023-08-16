@@ -5,7 +5,7 @@ Created on Mon Aug 14 13:48:34 2023
 @author: Leander
 """
 
-from datetime import date
+from datetime import date, datetime
 from dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd

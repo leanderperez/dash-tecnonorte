@@ -10,7 +10,7 @@ Atribución-NoComercial-SinDerivadas 4.0 Internacional.
 https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es
 """
 
-from datetime import date
+from datetime import date, datetime
 from dash import Dash, html, dcc, Input, Output, dash_table
 import plotly.express as px
 import pandas as pd
@@ -18,9 +18,13 @@ import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 import dash_auth
 # import os
+# port = int(os.environ.get("PORT", 5000))
 import passwords
+import locale 
+#locale.setlocale(locale.LC_ALL, None)
+locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
-#port = int(os.environ.get("PORT", 5000))
+
 
 
 #%% Lanzamiento de la Aplicación y Autenticación
@@ -34,7 +38,7 @@ auth = dash_auth.BasicAuth(
 #%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
 # df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
-bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale = 'Spanish')
+bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale='es_ES.UTF-8')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 
@@ -124,10 +128,9 @@ app.layout = html.Div([
             html.Label('Rango de Fecha'),
             dcc.DatePickerRange(
                 id='date',
-                # start_date_placeholder_text="Inicio",
-                end_date_placeholder_text="Fin",
-                calendar_orientation='horizontal',
                 start_date=date(2022, 1, 1),
+                end_date= datetime.now().date(),
+                calendar_orientation='horizontal',
                 style={'width': '30%', 'float': 'left', 'display': 'inline-block'}
                 )]),
         
@@ -383,9 +386,15 @@ def update_Visitas(cliente_seleccionado, clickData):
 @app.callback(
     Output('table', 'data'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_table(cliente_seleccionado, sucursales_selec):
-    df = bitacoras
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_table(cliente_seleccionado, sucursales_selec, start, end):
+    df = pd.read_excel('Consol.xlsx')
+    df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    df = df[(df['FECHA DE REPORTE']>=startdate) & (df['FECHA DE REPORTE'] <= enddate)]
     if cliente_seleccionado == None:
         df
     else:
