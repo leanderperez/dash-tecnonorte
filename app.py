@@ -123,22 +123,24 @@ app.layout = html.Div([
     #App
     html.Div(
         id='contenedor_app', children=[
-            
-        html.Div([
-            html.Label('Rango de Fecha'),
-            dcc.DatePickerRange(
-                id='date',
-                start_date=date(2022, 1, 1),
-                end_date= datetime.now().date(),
-                calendar_orientation='horizontal',
-                style={'width': '30%', 'float': 'left', 'display': 'inline-block'}
-                )]),
         
         html.Div([
-            html.Label('Clientes'),
-            dcc.Dropdown([*set(Locaciones(bitacoras)['CLIENTE'])],
-                         id='clientes')],
-                style={'width': '70%', 'float': 'right', 'display': 'inline-block'}),
+            html.Div([
+                html.Label('Rango de Fecha'),
+                dcc.DatePickerRange(
+                    id='date',
+                    start_date=date(2022, 1, 1),
+                    end_date= datetime.now().date(),
+                    calendar_orientation='horizontal',
+                    style={'width': '30%', 'float': 'left', 'display': 'inline-block'}
+                    )]),
+            
+            html.Div([
+                html.Label('Clientes'),
+                dcc.Dropdown([*set(Locaciones(bitacoras)['CLIENTE'])],
+                             id='clientes')],
+                    style={'width': '70%', 'float': 'right', 'display': 'inline-block'}),
+            ]),
         
         html.Div([
             html.Label('Sucursales'),
