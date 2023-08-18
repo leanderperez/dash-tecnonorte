@@ -21,7 +21,6 @@ import dash_auth
 # port = int(os.environ.get("PORT", 5000))
 import passwords
 import locale 
-#locale.setlocale(locale.LC_ALL, None)
 locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
 
 
@@ -37,10 +36,10 @@ auth = dash_auth.BasicAuth(
 
 #%% Procesamiento de datos
 bitacoras = pd.read_excel('Consol.xlsx')
-# df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
-bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale='es_ES.UTF-8')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
+# df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
+# bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale='es_ES.UTF-8')
 
 
 #%% Funciones
@@ -102,6 +101,11 @@ def Locaciones(df):
     locaciones = locaciones.fillna(0)
     return locaciones
 
+def Filtro4Ttiempo(startdate, enddate):
+    df = bitacoras
+    df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
+    df = df[(df['FECHA DE REPORTE']>=startdate) & (df['FECHA DE REPORTE'] <= enddate)]
+    return df
 
 #%% Layout
 app.layout = html.Div([
@@ -227,9 +231,14 @@ def sucursales_options(cliente_seleccionado):
 @app.callback(
     Output('Mapbox', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_Mapbox(cliente_seleccionado, sucursales_selec):
-    locaciones = Locaciones(bitacoras)
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_Mapbox(cliente_seleccionado, sucursales_selec, start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    df = Filtro4Ttiempo(startdate, enddate)
+    locaciones = Locaciones(df)
     if cliente_seleccionado == None:
         fig = Mapbox(locaciones, 'CLIENTE')
     else:
@@ -243,8 +252,13 @@ def update_Mapbox(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('ReportesFCliente', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_reportes(cliente_seleccionado, sucursales_selec):
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_reportes(cliente_seleccionado, sucursales_selec, start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    bitacoras = Filtro4Ttiempo(startdate, enddate)
     if cliente_seleccionado == None:
         df = bitacoras.CLIENTE.value_counts().rename('Reportes')
         df = df.reset_index()
@@ -266,8 +280,14 @@ def update_reportes(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('ReportesFMes', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_reportes4mes(cliente_seleccionado, sucursales_selec):
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_reportes4mes(cliente_seleccionado, sucursales_selec, start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    bitacoras = Filtro4Ttiempo(startdate, enddate)
+    bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale='es_ES.UTF-8')
     if cliente_seleccionado == None:
         df = bitacoras
         fig = Reportes4Mes(df)
@@ -292,8 +312,13 @@ def update_reportes4mes(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('FugasFCliente', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_fugas(cliente_seleccionado, sucursales_selec):
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_fugas(cliente_seleccionado, sucursales_selec, start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    bitacoras = Filtro4Ttiempo(startdate, enddate)
     if cliente_seleccionado == None:
         df = Locaciones(bitacoras)
         df = df.groupby(['CLIENTE'])['Refrigerante'].sum().reset_index().sort_values(by='Refrigerante', ascending=False)
@@ -322,8 +347,14 @@ def update_fugas(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('FugasFMes', 'figure'),
     Input('clientes', 'value'),
-    Input('sucursales', 'value'))
-def update_fugas4mes(cliente_seleccionado, sucursales_selec):
+    Input('sucursales', 'value'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_fugas4mes(cliente_seleccionado, sucursales_selec, start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    bitacoras = Filtro4Ttiempo(startdate, enddate)
+    bitacoras['FECHA DE REPORTE'] = pd.to_datetime(bitacoras['FECHA DE REPORTE']).dt.month_name(locale='es_ES.UTF-8')
     if cliente_seleccionado == None:
         df = bitacoras
         fig = Fugas4Mes(df)
@@ -350,8 +381,13 @@ def update_fugas4mes(cliente_seleccionado, sucursales_selec):
 @app.callback(
     Output('Visita', 'figure'),
     Input('clientes', 'value'),
-    Input('Mapbox', 'clickData'))
-def update_Visitas(cliente_seleccionado, clickData):
+    Input('Mapbox', 'clickData'),
+    Input('date', 'start_date'),
+    Input('date', 'end_date'))
+def update_Visitas(cliente_seleccionado, clickData,  start, end):
+    startdate = pd.to_datetime(start).date()
+    enddate = pd.to_datetime(end).date()
+    bitacoras = Filtro4Ttiempo(startdate, enddate)
     if cliente_seleccionado == None:
         df = bitacoras['TIPO DE FALLA'].value_counts().rename('Visitas')
         fig = px.pie(df, values='Visitas', names=df.index,
@@ -392,11 +428,9 @@ def update_Visitas(cliente_seleccionado, clickData):
     Input('date', 'start_date'),
     Input('date', 'end_date'))
 def update_table(cliente_seleccionado, sucursales_selec, start, end):
-    df = pd.read_excel('Consol.xlsx')
-    df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
     startdate = pd.to_datetime(start).date()
     enddate = pd.to_datetime(end).date()
-    df = df[(df['FECHA DE REPORTE']>=startdate) & (df['FECHA DE REPORTE'] <= enddate)]
+    df = Filtro4Ttiempo(startdate, enddate)
     if cliente_seleccionado == None:
         df
     else:
@@ -422,4 +456,4 @@ def display_click_data(clickData, start_date, end_date):
 
 
 if __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port=8050, debug=False)
+    app.run_server(host="0.0.0.0", port=8050, debug=True)
