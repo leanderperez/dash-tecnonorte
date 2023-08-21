@@ -190,7 +190,7 @@ app.layout = html.Div([
         html.Br(),
         dash_table.DataTable(
             
-            page_size=15,
+            page_size=20,
             style_table={'overflowX': 'auto'},
             style_header={
             'backgroundColor': 'rgb(37, 46, 63)',
@@ -203,8 +203,6 @@ app.layout = html.Div([
             'lineHeight': '15px',
             'textAlign': 'left'},
             id='table'),
-        
-        dcc.Download(id="download")
         
         ]),
     
