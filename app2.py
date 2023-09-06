@@ -29,7 +29,7 @@ app = Dash(
 
 
 #%% Procesamiento de datos
-bitacoras = pd.read_excel('Consol.xlsx')
+bitacoras = pd.read_excel('Consol2.xlsx')
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].replace(',', '.', regex=True)
 bitacoras['RECARGA DE REFRIGERANTE (KG)'] = bitacoras['RECARGA DE REFRIGERANTE (KG)'].astype(float)
 # df['FECHA DE REPORTE'] = pd.to_datetime(df['FECHA DE REPORTE']).dt.date
@@ -89,7 +89,7 @@ def Locaciones(df):
     refrigerante = df.groupby(['CLIENTE', 'SUCURSAL'])['RECARGA DE REFRIGERANTE (KG)'].sum().rename('Refrigerante')
     refrigerante = refrigerante.reset_index()
     
-    locaciones = pd.read_excel('Locations.xlsx')
+    locaciones = pd.read_excel('Locations2.xlsx')
     locaciones = locaciones.merge(reportes, how='outer')
     locaciones = locaciones.merge(refrigerante, how='outer')
     locaciones = locaciones.fillna(0)
