@@ -394,7 +394,7 @@ def update_Visitas(cliente_seleccionado, clickData,  start, end):
                      #template='seaborn',
                      color_discrete_sequence=px.colors.sequential.Blues_r)
         fig.update_traces(textposition='inside', textinfo='percent')
-        fig.update_layout(height=400, margin={'l': 20, 'b': 20, 'r': 0, 't': 50})
+        fig.update_layout(height=480, margin={'l': 20, 'b': 20, 'r': 20, 't': 50})
     else:
         df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
         dff = df['TIPO DE FALLA'].value_counts().rename('Visitas')
@@ -404,7 +404,7 @@ def update_Visitas(cliente_seleccionado, clickData,  start, end):
                      #template='seaborn',
                      color_discrete_sequence=px.colors.sequential.Blues_r)
         fig.update_traces(textposition='inside', textinfo='percent')
-        fig.update_layout(height=400, margin={'l': 20, 'b': 20, 'r': 0, 't': 50})
+        fig.update_layout(height=480, margin={'l': 20, 'b': 20, 'r': 20, 't': 50})
     if clickData != None:
         sucursal = clickData['points'][0]['hovertext']
         df = bitacoras[bitacoras['CLIENTE'] == cliente_seleccionado]
@@ -416,7 +416,7 @@ def update_Visitas(cliente_seleccionado, clickData,  start, end):
                      #template='seaborn',
                      color_discrete_sequence=px.colors.sequential.Blues_r)
         fig.update_traces(textposition='inside', textinfo='percent')
-        fig.update_layout(height=400, margin={'l': 20, 'b': 20, 'r': 0, 't': 50})
+        fig.update_layout(height=480, margin={'l': 20, 'b': 20, 'r': 20, 't': 50})
     return fig
     
 @app.callback(
