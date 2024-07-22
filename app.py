@@ -3,6 +3,7 @@
 Gestion de Reportes Tecnonorte v.3.5.0
 Created on Wed Feb  9 12:33:55 2022
 @author: Ing.Leander Perez
+email: leanderperez@gmail.com
 
 Esta obra está bajo una Licencia Creative Commons 
 Atribución-NoComercial-SinDerivadas 4.0 Internacional.
